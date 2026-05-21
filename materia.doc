@@ -1,0 +1,591 @@
+PHP
+
+Projeto app-blog
+
+Criação do Banco de dados "app-blog"
+
+Criação da tabela users(id, name, email, pass, slug, image, status)
+
+id int PK AI
+name varchar(255)
+email varchar(255)
+pass varchar(255)
+slug varchar(255)
+image varchar(255)
+status int
+
+-----------------------------------
+Criação do Projeto
+
+1. Crie uma pasta dentro do "c://xampp/htdocs" com o nome "app-blog"
+
+-----------------------------------
+
+Conexão com o Banco de Dados
+
+1. Crie um pasta "_conn" na raiz do Projeto
+2. Crie um arquivo dentro de "_conn" com o nome "conect.php"
+
+Codificação do arquivo
+
+_conn/conect.php
+******
+
+<?php
+// Define a URL para links, imagens e scripts (Navegador)
+$base_url = "http://localhost/app-blog/";
+if (!defined('BASE_URL')) define('BASE_URL', $base_url);
+
+// Define o Caminho Físico (Servidor) para evitar erros de include
+// __DIR__ aponta para a pasta _conn. O realpath + .. sobe para a raiz 'app-blog'
+if (!defined('BASE_PATH')) {
+    define('BASE_PATH', realpath(__DIR__ . '/..') . DIRECTORY_SEPARATOR);
+}
+
+//Configurações do banco de dados
+$host = "localhost";     // Endereço do servidor do banco de dados
+$dbname = "app-blog";   // Nome do banco de dados
+$user = "root";   // Usuário do banco de dados
+$password = ""; // Senha do banco de dados
+
+try {
+    // Cria uma nova instância da classe PDO
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    // Em caso de erro, exibe a mensagem
+    echo "Falha na conexão: " . $e->getMessage();
+}
+
+
+?>
+
+
+----------------------------------
+
+Teste de Conexão do Banco com o Projeto
+
+1. Abra via navegador: "http://localhost/app-blog/_conn/conect.php"
+
+Se a página ficar em branco a conexão foi efetuada com sucesso
+
+-----------------------------------
+
+Painel Administrativo
+
+1. Crie uma pasta "admin" na raiz do Projeto
+
+----------------------------------
+
+Login e Senha
+
+1. Crie um arquivo "index.php" e um arquivo "logar.php" dentro da pasta admin
+
+---------------------------------
+
+Página index do Projeto (Raiz)
+
+1. Crie um arquivo "index.php" na raiz do Projeto
+
+index.php
+*********
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2> 
+        App Blog
+    </h2>
+</body>
+</html>
+
+---------------------------------
+
+Download do Bootstrap
+
+1. Acesse "https://getbootstrap.com/docs/5.3/getting-started/download/" - Efetue o download do Bootstrap
+
+2. Crie uma pasta "public" na raiz do projeto
+
+3. Renomeie a pasta do bootstrap baixada para "bootstrap"
+
+	-> bootstrap/css
+	-> bootstrap/js
+
+4. Copie e Cole a pasta do bootstrap dentro da pasta "public" criada acima 
+	CSS ->	app-blog/public/bootstrap/css
+	JS ->	app-blog/public/bootstrap/js
+
+
+---------------------------------
+
+Codificação do Formulário de Login e Senha - Versão 1
+
+Admin/index.php
+
+*****
+<?php
+require_once '../_conn/conect.php';
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin</title>
+    <link rel="stylesheet" href="<?= $base_url ?>public/bootstrap/css/bootstrap.min.css">
+</head>
+
+<body>
+
+    <!-- Formulário Login e Senha -->
+    <div class="container mt-5">
+        <h2 class="mb-4">Login Admin</h2>
+        <form action="logar.php" method="POST">
+            <div class="mb-3">
+                <label for="email" class="form-label">E-mail</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="pass" class="form-label">Senha</label>
+                <input type="password" class="form-control" id="pass" name="pass" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Entrar</button>
+        </form>
+
+</body>
+
+</html>
+
+-----------------------------
+
+Acesse o Painel Admin
+
+localhost/app-blog/admin
+
+-> Deverá ser exibido a tela de Login e Senha
+
+Efetue o teste para verificar se o formulário está redirecionando para o logar.php (Clique no botão Entrar) 
+
+
+-----------------------------
+
+admin/logar.php
+(Versão 1 do logar )
+
+<?php
+$post = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+// echo '<pre>';
+// var_dump($post);
+// echo '</pre>';
+
+// echo $post['email'] . '<br>';
+// echo $post['pass'] . '<br>';
+
+if (isset($post['email']) && isset($post['pass'])) { // isset -> Verifica se a variável existe
+    // Tratamento do login e senha trim (remove espaços ante e depois), strtolower(converte para minúsculo)
+    $post['email'] = trim(strtolower($post['email']));
+    $post['pass'] = trim($post['pass']);
+
+    if(empty($post['email']) || empty($post['pass'])){ // empty -> Verifica se a variável está vazia
+        echo 'Preencha todos os campos!';
+    } else {
+        $loginValido = 'nelci@gmail.com';
+        $senhaValida = '123';
+
+        if ($post['email'] == $loginValido && $post['pass'] == $senhaValida) {
+            echo 'Login realizado com sucesso!';
+        } else {
+            echo 'Email ou senha incorretos!';
+        }
+    }
+}
+
+
+-----------------------------------------
+
+Teste o Sistema até esse ponto, verifique se os dados estão sendo enviados corretamente para o arquivo logar.php
+
+
+----------------------------------------
+
+Estilização do Formulário de Login e Senha - Versão 2 - 
+
+admin/index.php
+************
+
+<?php
+require_once '../_conn/conect.php';
+// Verifica se há erro na URL para exibir o alerta
+$erro = isset($_GET['erro']) ? true : false;
+?>
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso ao Sistema</title>
+    <link rel="stylesheet" href="<?= $base_url ?>public/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { background: #f4f6f9; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .card-login { width: 100%; max-width: 420px; border: none; border-radius: 12px; }
+        .btn-login { padding: 12px; font-weight: 600; border-radius: 8px; }
+        .form-floating > .form-control:focus ~ label { color: #007bff; }
+    </style>
+</head>
+
+<body>
+
+    <div class="container d-flex justify-content-center">
+        <div class="card card-login shadow-lg">
+            <div class="card-body p-5">
+                
+                <div class="text-center mb-4">
+                    <i class="bi bi-shield-lock-fill text-secondary" style="font-size: 2rem;"></i>
+                    <h2 class="fw-bold mt-2">Painel Admin</h2>
+                    <p class="text-muted small">Insira suas credenciais abaixo</p>
+                </div>
+
+                <?php if ($erro): ?>
+                <div class="alert alert-danger border-0 d-flex align-items-center mb-4" role="alert">
+                    <i class="bi bi-exclamation-circle-fill me-2"></i>
+                    <div>Acesso negado. Tente novamente.</div>
+                </div>
+                <?php endif; ?>
+
+                <form action="logar.php" method="POST">
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="email" name="email" placeholder="nome@exemplo.com" required>
+                        <label for="email"><i class="bi bi-envelope me-2"></i>E-mail</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="pass" name="pass" placeholder="Senha" required>
+                        <label for="pass"><i class="bi bi-key me-2"></i>Senha</label>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="remember">
+                            <label class="form-check-label small text-muted" for="remember">Lembrar-me</label>
+                        </div>
+                        <a href="recuperar.php" class="text-decoration-none small fw-medium">Esqueceu a senha?</a>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 btn-login shadow-sm">
+                        Acessar Sistema <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+                </form>
+
+            </div>
+            <div class="card-footer bg-white border-0 text-center pb-4">
+                <span class="text-muted small">&copy; <?= date('Y') ?> Sua Empresa</span>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+
+
+-----------------------------------------
+
+Crie dentro do "admin" o arquivo "home.php"
+
+-----------------------------------------
+
+Logar com Banco de dados e Sessão
+(Versão 2 do logar )
+
+
+admin/logar.php
+**********
+
+<?php
+session_start();
+// Essa validação é quando acessa a url diretamente: localhost/app-login/logar.php
+if (empty($_POST)) {
+    echo "Acesso Restrito";
+    die();
+}
+include_once '../_conn/conect.php';
+$post = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+// echo '<pre>';
+// var_dump($post);
+// echo '</pre>';
+
+// echo $post['email'] . '<br>';
+// echo $post['pass'] . '<br>';
+
+if (isset($post['email']) && isset($post['pass'])) { // isset -> Verifica se a variável existe
+    // Tratamento do login e senha trim (remove espaços ante e depois), strtolower(converte para minúsculo)
+    $post['email'] = trim(strtolower($post['email']));
+    $post['pass'] = trim($post['pass']);
+
+    if (empty($post['email']) || empty($post['pass'])) { // empty -> Verifica se a variável está vazia
+        echo 'Preencha todos os campos!';
+    } else {
+        try {
+            // Verificação com o Banco de Dados
+            $sth = $pdo->prepare('SELECT * FROM users WHERE email = :email AND pass = :pass');
+            $sth->bindParam(':email', $post['email']);
+            $sth->bindParam(':pass', $post['pass']);
+            $sth->execute();
+            if ($sth->rowCount() > 0) {
+                $_SESSION['email'] = $post['email'];
+                header('Location: home.php');
+            } else {
+                if (isset($_SESSION['email'])) {
+                    unset($_SESSION['email']);
+                }
+                echo "Usuário ou senha inválidos!";
+            }
+        } catch (PDOException $e) {
+            echo 'Erro: ' . $e->getMessage();
+        }
+    }
+}
+
+
+-----------------------------------------
+
+Crie o Diretório "_inc" dentro do "admin"
+
+Crie os arquivos "_header.php" e "_footer.php" dentro do diretório "_inc"
+
+	-> "admin/_inc/_header.php"
+	-> "admin/_inc/_footer.php"
+
+OBS: Esses arquivos fazem parte da Estrutura do Projeto
+
+-----------------------------------------
+
+Crie na raiz do Projeto dentro de "public" o diretório "admin"
+
+Crie dentro do diretório "public/admin" o diretório "css"
+
+Crie dentro do diretório "public/admin/css" o arquivo admin.css
+
+
+
+OBS: Esse arquivo é o arquivo de formatação de layout do Painel Administrativo
+
+-----------------------------------------
+
+public/admin/css/admin.css - Versão 1
+*********
+
+body {
+    overflow-x: hidden;
+    background-color: #f4f6f9;
+}
+
+/* Ajuste para a Navbar fixa */
+.wrapper {
+    display: flex;
+    margin-top: 56px; /* Altura da navbar */
+    min-height: calc(100vh - 56px);
+}
+
+/* Sidebar */
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    transition: all 0.3s;
+}
+
+#sidebar.active {
+    margin-left: -250px;
+}
+
+#sidebar .nav-link {
+    color: #333;
+    padding: 15px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+#sidebar .nav-link:hover {
+    background-color: #e9ecef;
+}
+
+/* Área de Conteúdo */
+.content-wrapper {
+    width: 100%;
+    transition: all 0.3s;
+}
+
+/* Ajuste para o submenu */
+#sidebar .nav-link {
+    color: #333;
+    padding: 12px 15px;
+    display: block;
+    text-decoration: none;
+}
+
+#sidebar .nav-link:hover {
+    background-color: #e9ecef;
+}
+
+#sidebar .collapse .nav-link {
+    /* Submenu levemente menor */
+    font-size: 0.9rem; 
+    border-bottom: none;
+    padding: 8px 15px;
+}
+
+/* Rotação do ícone quando o menu abre */
+[aria-expanded="true"] .fa-chevron-down {
+    transform: rotate(180deg);
+    transition: 0.3s;
+}
+
+/* Responsividade para telas pequenas */
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+}
+
+
+
+
+
+
+-----------------------------------------
+
+admin/_inc/_header.php - Versão 1
+*********
+
+<?php
+session_start();
+if (!isset($_SESSION['email'])) {
+    header('Location: index.php?error=true');
+    exit();
+}
+$raiz = dirname(__DIR__, 2);
+include_once $raiz . '/_conn/conect.php';
+?>
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | Painel</title>
+    <link rel="stylesheet" href="<?= $base_url ?>public/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="<?= $base_url ?>public/admin/css/admin.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="home.php">MinhaLogo</a>
+            <button class="btn btn-link text-white me-3" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+            <div class="ms-auto">
+                <span class="text-white me-3">Olá, <?= $_SESSION['email'] ?></span>
+                <a href="logout.php" class="btn btn-outline-light btn-sm">Sair</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wrapper">
+        <nav id="sidebar" class="bg-light border-end">
+            <div class="p-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= $base_url ?>admin/home.php">
+                            <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link d-flex justify-content-between align-items-center"
+                            data-bs-toggle="collapse"
+                            href="#menuUsuarios"
+                            role="button"
+                            aria-expanded="false">
+                            <span><i class="fas fa-users me-2"></i> Usuários</span>
+                            <i class="fas fa-chevron-down small"></i>
+                        </a>
+                        <div class="collapse" id="menuUsuarios">
+                            <ul class="nav flex-column ms-3 mt-1">
+                                <li class="nav-item">
+                                    <a class="nav-link py-1" href="<?= $base_url ?>admin/usuarios/form.php">
+                                        <i class="fas fa-user-plus me-2"></i> Novo Usuário
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link py-1" href="<?= $base_url ?>admin/usuarios/index.php">
+                                        <i class="fas fa-list me-2"></i> Listar Usuários
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-cog me-2"></i> Configurações</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="content-wrapper p-4">
+
+-----------------------------------------
+
+admin/_inc/_footer.php - Versão 1
+*********
+
+</main>
+    </div> <script src="<?= $base_url ?>public/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>
+-----------------------------------------
+
+
+
+admin/home.php
+**************
+
+<?php include_once '_inc/_header.php'; ?>
+
+<div class="container-fluid">
+    <h2 class="mb-4">Dashboard</h2>
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <div class="card bg-primary text-white shadow">
+                <div class="card-body">Vendas: 150</div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card bg-success text-white shadow">
+                <div class="card-body">Novos Clientes: 45</div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card bg-warning text-dark shadow">
+                <div class="card-body">Alertas: 3</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php include_once '_inc/_footer.php'; ?>
+
