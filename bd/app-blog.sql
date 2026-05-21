@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 16/04/2026 às 13:53
+-- Tempo de geração: 21/05/2026 às 15:35
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -51,6 +51,7 @@ CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
+  `telefone` varchar(20) NOT NULL,
   `pass` varchar(255) NOT NULL,
   `slug` varchar(255) NOT NULL,
   `image` varchar(255) NOT NULL,
@@ -62,8 +63,11 @@ CREATE TABLE `users` (
 -- Despejando dados para a tabela `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `pass`, `slug`, `image`, `status`, `id_level_users`) VALUES
-(4, 'Saulo Elias', 'Saulo@gmail.com', '123', '', '', 1, 1);
+INSERT INTO `users` (`id`, `name`, `email`, `telefone`, `pass`, `slug`, `image`, `status`, `id_level_users`) VALUES
+(4, 'Saulo Elias', 'Saul3244532o@gmail.com', '', 'e10adc3949ba59abbe56e057f20f883e', '', '', 1, 1),
+(13, 'Saulo Elias', 'Saulo@gmail.com', '', 'e10adc3949ba59abbe56e057f20f883e', '', '', 1, 1),
+(14, 'Billie Eilish', 'billie@gmail.com', '', '5b6ba13f79129a74a3e819b78e36b922', '', '', 1, 2),
+(15, 'Sabrina Carpenter', 'sabrina@gmail.com', '', 'af21d0c97db2e27e13572cbf59eb343d', '', '', 1, 2);
 
 --
 -- Índices para tabelas despejadas
@@ -96,7 +100,7 @@ ALTER TABLE `level_users`
 -- AUTO_INCREMENT de tabela `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- Restrições para tabelas despejadas

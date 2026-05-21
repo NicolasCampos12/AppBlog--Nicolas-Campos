@@ -30,7 +30,7 @@
             <h6 class="fw-bold mb-0 text-dark">Cadastro</h6>
         </div>
         <div class="card-body p-4">
-            <form action="insert.php" method="POST" id="formCadastro">
+            <form action="insert.php" method="POST" id="formCadastro" enctype="multipart/form-data">
 
                 <div class="row g-4 mb-4">
 
