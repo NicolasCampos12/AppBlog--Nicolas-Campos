@@ -1,7 +1,7 @@
 
 <?php
 // Define a URL para links, imagens e scripts (Navegador)
-$base_url = "http://localhost/app-blog-Nicolas-Campos/";
+$base_url = "http://localhost/app-blog-Nicolas-Campos/projetoNelci/";
 if (!defined('BASE_URL')) define('BASE_URL', $base_url);
 
 // Define o Caminho Físico (Servidor) para evitar erros de include
@@ -12,7 +12,7 @@ if (!defined('BASE_PATH')) {
 
 //Configurações do banco de dados
 $host = "localhost";     // Endereço do servidor do banco de dados
-$dbname = "app-blog";   // Nome do banco de dados
+$dbname = "app_blog";   // Nome do banco de dados
 $user = "root";   // Usuário do banco de dados
 $password = ""; // Senha do banco de dados
 

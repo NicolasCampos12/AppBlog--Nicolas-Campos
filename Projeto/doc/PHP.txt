@@ -1,0 +1,380 @@
+PHP
+
+Projeto app-blog
+
+Criação do Banco de dados "app-blog"
+
+Criação da tabela users(id, name, email, pass, slug, image, status)
+
+id int PK AI
+name varchar(255)
+email varchar(255)
+pass varchar(255)
+slug varchar(255)
+image varchar(255)
+status int
+
+-----------------------------------
+Criação do Projeto
+
+1. Crie uma pasta dentro do "c://xampp/htdocs" com o nome "app-blog"
+
+-----------------------------------
+
+Conexão com o Banco de Dados
+
+1. Crie um pasta "_conn" na raiz do Projeto
+2. Crie um arquivo dentro de "_conn" com o nome "conect.php"
+
+Codificação do arquivo
+
+_conn/conect.php
+******
+
+<?php
+// Define a URL para links, imagens e scripts (Navegador)
+$base_url = "http://localhost/app-blog/";
+if (!defined('BASE_URL')) define('BASE_URL', $base_url);
+
+// Define o Caminho Físico (Servidor) para evitar erros de include
+// __DIR__ aponta para a pasta _conn. O realpath + .. sobe para a raiz 'app-blog'
+if (!defined('BASE_PATH')) {
+    define('BASE_PATH', realpath(__DIR__ . '/..') . DIRECTORY_SEPARATOR);
+}
+
+//Configurações do banco de dados
+$host = "localhost";     // Endereço do servidor do banco de dados
+$dbname = "app-blog";   // Nome do banco de dados
+$user = "root";   // Usuário do banco de dados
+$password = ""; // Senha do banco de dados
+
+try {
+    // Cria uma nova instância da classe PDO
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    // Em caso de erro, exibe a mensagem
+    echo "Falha na conexão: " . $e->getMessage();
+}
+
+
+?>
+
+
+----------------------------------
+
+Teste de Conexão do Banco com o Projeto
+
+1. Abra via navegador: "http://localhost/app-blog/_conn/conect.php"
+
+Se a página ficar em branco a conexão foi efetuada com sucesso
+
+-----------------------------------
+
+Painel Administrativo
+
+1. Crie uma pasta "admin" na raiz do Projeto
+
+----------------------------------
+
+Login e Senha
+
+1. Crie um arquivo "index.php" e um arquivo "logar.php" dentro da pasta admin
+
+---------------------------------
+
+Página index do Projeto (Raiz)
+
+1. Crie um arquivo "index.php" na raiz do Projeto
+
+index.php
+*********
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2> 
+        App Blog
+    </h2>
+</body>
+</html>
+
+---------------------------------
+
+Download do Bootstrap
+
+1. Acesse "https://getbootstrap.com/docs/5.3/getting-started/download/" - Efetue o download do Bootstrap
+
+2. Crie uma pasta "public" na raiz do projeto
+
+3. Renomeie a pasta do bootstrap baixada para "bootstrap"
+
+	-> bootstrap/css
+	-> bootstrap/js
+
+4. Copie e Cole a pasta do bootstrap dentro da pasta "public" criada acima 
+	CSS ->	app-blog/public/bootstrap/css
+	JS ->	app-blog/public/bootstrap/js
+
+
+---------------------------------
+
+Codificação do Formulário de Login e Senha
+
+Admin/index.php
+
+*****
+<?php
+require_once '../_conn/conect.php';
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin</title>
+    <link rel="stylesheet" href="<?= $base_url ?>public/bootstrap/css/bootstrap.min.css">
+</head>
+
+<body>
+
+    <!-- Formulário Login e Senha -->
+    <div class="container mt-5">
+        <h2 class="mb-4">Login Admin</h2>
+        <form action="logar.php" method="POST">
+            <div class="mb-3">
+                <label for="email" class="form-label">E-mail</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="pass" class="form-label">Senha</label>
+                <input type="password" class="form-control" id="pass" name="pass" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Entrar</button>
+        </form>
+
+</body>
+
+</html>
+
+-----------------------------
+
+Acesse o Painel Admin
+
+localhost/app-blog/admin
+
+-> Deverá ser exibido a tela de Login e Senha
+
+Efetue o teste para verificar se o formulário está redirecionando para o logar.php (Clique no botão Entrar) 
+
+
+-----------------------------
+
+admin/logar.php
+
+<?php
+$post = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+// echo '<pre>';
+// var_dump($post);
+// echo '</pre>';
+
+// echo $post['email'] . '<br>';
+// echo $post['pass'] . '<br>';
+
+if (isset($post['email']) && isset($post['pass'])) { // isset -> Verifica se a variável existe
+    // Tratamento do login e senha trim (remove espaços ante e depois), strtolower(converte para minúsculo)
+    $post['email'] = trim(strtolower($post['email']));
+    $post['pass'] = trim($post['pass']);
+
+    if(empty($post['email']) || empty($post['pass'])){ // empty -> Verifica se a variável está vazia
+        echo 'Preencha todos os campos!';
+    } else {
+        $loginValido = 'nelci@gmail.com';
+        $senhaValida = '123';
+
+        if ($post['email'] == $loginValido && $post['pass'] == $senhaValida) {
+            echo 'Login realizado com sucesso!';
+        } else {
+            echo 'Email ou senha incorretos!';
+        }
+    }
+}
+
+
+-----------------------------------------
+
+Teste o Sistema até esse ponto, verifique se os dados estão sendo enviados corretamente para o arquivo logar.php
+
+
+-----------------------------------------
+
+Crie dentro do "admin" o arquivo "home.php"
+
+-----------------------------------------
+
+Logar com Banco de dados e Sessão
+
+admin/logar.php
+**********
+
+<?php
+session_start();
+include_once '../_conn/conect.php';
+// Essa validação é quando acessa a url diretamente: localhost/app-login/logar.php
+if (empty($_POST)) {
+    echo "Acesso Restrito";
+    die();
+}
+$post = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+// echo '<pre>';
+// var_dump($post);
+// echo '</pre>';
+
+// echo $post['email'] . '<br>';
+// echo $post['pass'] . '<br>';
+
+if (isset($post['email']) && isset($post['pass'])) { // isset -> Verifica se a variável existe
+    // Tratamento do login e senha trim (remove espaços ante e depois), strtolower(converte para minúsculo)
+    $post['email'] = trim(strtolower($post['email']));
+    $post['pass'] = trim($post['pass']);
+
+    if (empty($post['email']) || empty($post['pass'])) { // empty -> Verifica se a variável está vazia
+        echo 'Preencha todos os campos!';
+    } else {
+        try {
+            // Verificação com o Banco de Dados
+            $sth = $pdo->prepare('SELECT * FROM user WHERE email = :email AND pass = :pass');
+            $sth->bindParam(':email', $post['email']);
+            $sth->bindParam(':pass', $post['pass']);
+            $sth->execute();
+            if ($sth->rowCount() > 0) {
+                $_SESSION['email'] = $post['email'];
+                header('Location: home.php');
+            } else {
+                if (isset($_SESSION['email'])) {
+                    unset($_SESSION['email']);
+                }
+                echo "Usuário ou senha inválidos!";
+            }
+        } catch (PDOException $e) {
+            echo 'Erro: ' . $e->getMessage();
+        }
+    }
+}
+
+
+-----------------------------------------
+
+Crie o Diretório "_inc" dentro do "admin"
+
+Crie os arquivos "_header.php" e "_footer.php" dentro do diretório "_inc"
+
+	-> "admin/_inc/_header.php"
+	-> "admin/_inc/_footer.php"
+
+
+-----------------------------------------
+
+Crie na raiz do Projeto dentro de "public" o diretório "admin"
+
+Crie dentro do diretório "public/admin" o diretório "css"
+
+Crie dentro do diretório "public/admin/css" o arquivo adminlte.css
+
+-----------------------------------------
+
+public/admin/css/adminlte.css
+*********
+
+body {
+    overflow-x: hidden;
+    background-color: #f4f6f9;
+}
+
+/* Ajuste para a Navbar fixa */
+.wrapper {
+    display: flex;
+    margin-top: 56px; /* Altura da navbar */
+    min-height: calc(100vh - 56px);
+}
+
+/* Sidebar */
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    transition: all 0.3s;
+}
+
+#sidebar.active {
+    margin-left: -250px;
+}
+
+#sidebar .nav-link {
+    color: #333;
+    padding: 15px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+#sidebar .nav-link:hover {
+    background-color: #e9ecef;
+}
+
+/* Área de Conteúdo */
+.content-wrapper {
+    width: 100%;
+    transition: all 0.3s;
+}
+
+/* Ajuste para o submenu */
+#sidebar .nav-link {
+    color: #333;
+    padding: 12px 15px;
+    display: block;
+    text-decoration: none;
+}
+
+#sidebar .nav-link:hover {
+    background-color: #e9ecef;
+}
+
+#sidebar .collapse .nav-link {
+    font-size: 0.9rem; /* Submenu levemente menor */
+    border-bottom: none;
+    padding: 8px 15px;
+}
+
+/* Rotação do ícone quando o menu abre */
+[aria-expanded="true"] .fa-chevron-down {
+    transform: rotate(180deg);
+    transition: 0.3s;
+}
+
+/* Responsividade para telas pequenas */
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+}
+
+
+
+
+-----------------------------------------
+
+
+admin/home.php
+**************
+
+
+
+
+	 
